@@ -3,38 +3,45 @@ async function redirectToTopicWiki(category) {
         const button = event.target;
         const originalText = button.textContent;
         button.disabled = true;
+        button.classList.add('loading');
         
-        const timestamp = new Date().getTime();
-        const response = await fetch(`/api/random-article?category=${category}&t=${timestamp}`, {
-            headers: {
-                'Cache-Control': 'no-cache',
-                'Pragma': 'no-cache'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
+        const response = await fetch(`/api/random-article?category=${category}`);
         const data = await response.json();
+        
         if (data.url) {
-            button.disabled = false;
-            button.textContent = originalText;
-            window.location.href = data.url;
+            // Показываем модальное окно с кратким содержанием
+            if (data.summary) {
+                showSummaryModal(data.title, data.summary, data.url);
+            } else {
+                window.location.href = data.url;
+            }
         } else {
             throw new Error('No URL in response');
         }
+        
+        button.disabled = false;
+        button.classList.remove('loading');
+        button.textContent = originalText;
     } catch (error) {
-        console.error('Произошла ошибка при получении случайной статьи:', error);
-        const button = event.target;
-        button.textContent = 'Ошибка! Попробуйте снова';
-        button.classList.add('error');
-        setTimeout(() => {
-            button.disabled = false;
-            button.textContent = getButtonText(category);
-            button.classList.remove('error');
-        }, 2000);
+        console.error('Ошибка:', error);
+        // ... обработка ошибки ...
     }
+}
+
+function showSummaryModal(title, summary, url) {
+    const modal = document.createElement('div');
+    modal.className = 'summary-modal';
+    modal.innerHTML = `
+        <div class="summary-content">
+            <h2>${title}</h2>
+            <p>${summary}</p>
+            <div class="summary-buttons">
+                <button onclick="window.location.href='${url}'">Читать статью</button>
+                <button onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
 }
 
 function getButtonText(category) {
@@ -48,3 +55,88 @@ function getButtonText(category) {
     };
     return texts[category] || category;
 }
+
+async function searchWiki() {
+    const searchInput = document.getElementById('searchInput');
+    const query = searchInput.value.trim();
+    
+    if (!query) {
+        return;
+    }
+
+    try {
+        const button = document.querySelector('.search-button');
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Поиск...';
+        
+        const response = await fetch(`/api/search-wiki?query=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        if (data.notFound) {
+            showNotFoundModal();
+        } else if (data.url) {
+            showSummaryModalWithSimilar(data.title, data.summary, data.url, data.similar);
+        }
+        
+        button.disabled = false;
+        button.textContent = originalText;
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при поиске');
+    }
+}
+
+function showSummaryModalWithSimilar(title, summary, url, similarTitles) {
+    const modal = document.createElement('div');
+    modal.className = 'summary-modal';
+    modal.innerHTML = `
+        <div class="summary-content">
+            <h2>${title}</h2>
+            <p>${summary}</p>
+            ${similarTitles.length > 0 ? `
+                <div class="similar-articles">
+                    <h3>Похожие статьи:</h3>
+                    <ul>
+                        ${similarTitles.map(title => `
+                            <li>
+                                <a href="https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}" 
+                                   target="_blank">${title}</a>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+            <div class="summary-buttons">
+                <button onclick="window.location.href='${url}'">Читать статью</button>
+                <button onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function showNotFoundModal() {
+    const modal = document.createElement('div');
+    modal.className = 'summary-modal';
+    modal.innerHTML = `
+        <div class="summary-content">
+            <h2>Статья не найдена</h2>
+            <p>К сожалению, по вашему запросу ничего не найдено.</p>
+            <div class="summary-buttons">
+                <button onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// Добавляем обработчик Enter для поискового поля
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchWiki();
+        }
+    });
+});

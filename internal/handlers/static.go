@@ -11,6 +11,14 @@ func StaticHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, html)
 }
 
+func getParticlesHTML() string {
+	particles := ""
+	for i := 0; i < 50; i++ {
+		particles += `<div class="particle"></div>`
+	}
+	return particles
+}
+
 func getIndexHTML() string {
 	return `
 <html lang="ru">
@@ -24,7 +32,19 @@ func getIndexHTML() string {
     <link rel="stylesheet" href="/static/css/style.css?v=4">
 </head>
 <body>
+    <div class="particles">
+        ` + getParticlesHTML() + `
+    </div>
+    <div class="glow"></div>
+    <div class="glow"></div>
+    <div class="glow"></div>
+    
     <div class="container">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Поиск статьи..." class="search-input">
+            <button onclick="searchWiki()" class="search-button">Найти</button>
+        </div>
+
         <h1>Выберите топик для случайной статьи на Википедии</h1>
         <div class="topics-grid">
             <button onclick="redirectToTopicWiki('science')">Наука</button>

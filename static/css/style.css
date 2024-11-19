@@ -1,83 +1,774 @@
 /* Version: 1.0 */
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+:root {
+  --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --gradient-primary: linear-gradient(135deg, #00ff87 0%, #60efff 100%);
+  --shadow-elevation: 0 10px 20px rgba(0, 0, 0, 0.1);
+  --background-dark: #1a1a1a;
+  --text-color: #ffffff;
+  --card-gradient: linear-gradient(135deg, rgba(0, 255, 135, 0.1) 0%, rgba(96, 239, 255, 0.1) 100%);
+  --primary: #FFFFFF;     /* Белый вместо неонового */
+  --secondary: #FF00FF;   /* Неоновый пурпурный */
+  --accent: rgba(255, 255, 255, 0.8); /* Полупрозрачный белый */
+  --background: #0A0A0A;  /* Тёмный фон */
+  --text: #FFFFFF;        /* Белый текст */
 }
+
+body {
+  font-family: var(--font-primary);
+  font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--background-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: linear-gradient(0deg, transparent 24%, 
+                rgba(255, 255, 255, .05) 25%,
+                rgba(255, 255, 255, .05) 26%, 
+                transparent 27%, transparent 74%,
+                rgba(255, 255, 255, .05) 75%,
+                rgba(255, 255, 255, .05) 76%, transparent 77%),
+            linear-gradient(90deg, transparent 24%, 
+                rgba(255, 255, 255, .05) 25%,
+                rgba(255, 255, 255, .05) 26%, 
+                transparent 27%, transparent 74%,
+                rgba(255, 255, 255, .05) 75%,
+                rgba(255, 255, 255, .05) 76%, transparent 77%);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    z-index: 1;
+}
+
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    background-color: #FFFFFF;  /* Чисто белый цвет */
+    opacity: 0.6;              /* Можно настроить прозрачность */
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 15s infinite linear;
+}
+
+.particle:nth-child(1) { width: 3px; height: 3px; left: 10vw; top: 20vh; animation-delay: 0.5s; opacity: 0.8; }
+.particle:nth-child(2) { width: 2px; height: 2px; left: 30vw; top: 40vh; animation-delay: 1.2s; opacity: 0.6; }
+.particle:nth-child(3) { width: 5px; height: 5px; left: 50vw; top: 60vh; animation-delay: 2.1s; opacity: 0.7; }
+.particle:nth-child(4) { width: 1px; height: 1px; left: 70vw; top: 80vh; animation-delay: 3.3s; opacity: 0.5; }
+.particle:nth-child(5) { width: 4px; height: 4px; left: 90vw; top: 30vh; animation-delay: 4.2s; opacity: 0.9; }
+/* Добавьте больше частиц по необходимости */
+
+.glow {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 30%,
+        transparent 70%);
+    border-radius: 50%;
+    animation: glowFloat 15s infinite ease-in-out;
+}
+
+.glow:nth-child(1) {
+    top: 20%;
+    left: 20%;
+    animation-delay: -2s;
+}
+
+.glow:nth-child(2) {
+    top: 60%;
+    left: 70%;
+    width: 200px;
+    height: 200px;
+    animation-delay: -5s;
+}
+
+.glow:nth-child(3) {
+    top: 40%;
+    left: 40%;
+    width: 180px;
+    height: 180px;
+    animation-delay: -7s;
+}
+
+@keyframes gridMove {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(-50px, -50px);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    33% {
+        transform: translateY(-50px) translateX(50px);
+    }
+    66% {
+        transform: translateY(50px) translateX(-50px);
+    }
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+}
+
+@keyframes glowFloat {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(20px, -20px);
+    }
+}
+
 .container {
-    background: rgba(139, 139, 139, 0.8);
+    position: relative;
+    z-index: 2;
+    background-color: #212121;  /* Светло-серый фон */
     padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border: 1px solid  rgba(139, 139, 139, 0.8);
-    max-width: 800px;
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #E0E0E0;
+    max-width: 900px;
     width: 90%;
+    color: #212121;  /* Тёмно-серый текст */
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+}
+p, li, span {
+    line-height: 1.6;
+    font-size: 16px;
 }
 h1 {
-    color: white;
+    color: #ffffff;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 1.8em;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 40px;
+    font-size: 2.2em;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
 }
 .topics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding: 2rem;
 }
 button {
-    background-color: #515151;
-    color: white;
+    background-color: #424242;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
     padding: 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 1.1em;
     font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    outline: none;
+}
+
+button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transition: 0.5s;
 }
 button:hover {
-    background-color: #666666;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background-color: #616161;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+    animation-play-state: paused;
+    animation-duration: 3s;
+}
+button:hover:before {
+    left: 100%;
 }
 button:active {
     transform: translateY(0);
-    background-color: #444444;
-}
-button:disabled {
-    background-color: #888888;
-    cursor: not-allowed;
-    transform: none;
+    background: linear-gradient(145deg, #1f2235, #2a2d3e);
 }
 button.error {
-    background-color: #ff4444;
+    background: linear-gradient(145deg, #ff4444, #cc0000);
 }
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .container {
-        padding: 20px;
+        padding: 30px;
+        width: 95%;
     }
     
     h1 {
-        font-size: 1.5em;
+        font-size: 1.8em;
+        margin-bottom: 30px;
     }
     
     .topics-grid {
         grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 10px;
+        gap: 20px;
+        padding: 15px;
     }
     
     button {
-        padding: 15px;
-        font-size: 1em;
+        padding: 18px;
+        font-size: 1.05em;
+    }
+}
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    top: 50%;
+    left: 50%;
+    margin: -12px 0 0 -12px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+} 
+
+/* Добавим красивые иконки для кнопок */
+button::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    opacity: 0.3;
+    transition: 0.3s;
+}
+
+button:hover::after {
+    opacity: 1;
+    transform: translateX(5px);
+} 
+
+/* Плавные переходы для интерактивных элементов */
+a, button {
+  transition: all 0.2s ease-in-out;
+}
+
+a:hover, button:hover {
+  transform: translateY(-1px);
+} 
+
+.container {
+  max-width: 1200px;
+  padding: 2rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1.text-gradient {
+  font-family: 'Inter', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 1) 0%, 
+        rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 20px rgba(96, 239, 255, 0.2);
+}
+
+.topics-grid {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px 0 rgb(255, 255, 255);
+  backdrop-filter: blur(4px);
+  color: var(--text-color);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Добавим эффект при наведении на заголовок */
+h1.text-gradient:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+/* Медиа-запрос для мобильных устройств */
+@media (max-width: 768px) {
+  h1.text-gradient {
+    font-size: 2.5rem;
+  }
+} 
+
+/* Убираем стандартный скроллбар для всей страницы */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Для Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #333 var(--background-dark);
+} 
+
+.topic-card {
+    background: var(--card-gradient);
+    border: 1px solid rgba(96, 239, 255, 0.2);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.topic-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(96, 239, 255, 0.4);
+    box-shadow: 0 0 30px rgba(0, 255, 135, 0.2);
+}
+
+.topic-card h2 {
+    color: #00ff87;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.topic-card p {
+    color: #e0e0e0;
+    font-size: 1rem;
+    line-height: 1.6;
+} 
+
+/* Добавляем анимированные частицы */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    background-color: #FFFFFF;  /* Чисто белый цвет */
+    opacity: 0.6;              /* Можно настроить прозрачность */
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 15s infinite linear;
+}
+
+/* Создаем 50 частиц разного размера */
+.particle:nth-child(1) { width: 3px; height: 3px; }
+.particle:nth-child(2) { width: 2px; height: 2px; }
+.particle:nth-child(3) { width: 5px; height: 5px; }
+.particle:nth-child(4) { width: 1px; height: 1px; }
+.particle:nth-child(5) { width: 4px; height: 4px; }
+.particle:nth-child(6) { width: 2px; height: 2px; }
+.particle:nth-child(7) { width: 4px; height: 4px; }
+.particle:nth-child(8) { width: 3px; height: 3px; }
+.particle:nth-child(9) { width: 1px; height: 1px; }
+.particle:nth-child(10) { width: 5px; height: 5px; }
+.particle:nth-child(11) { width: 2px; height: 2px; }
+.particle:nth-child(12) { width: 4px; height: 4px; }
+.particle:nth-child(13) { width: 3px; height: 3px; }
+.particle:nth-child(14) { width: 1px; height: 1px; }
+.particle:nth-child(15) { width: 5px; height: 5px; }
+.particle:nth-child(16) { width: 2px; height: 2px; }
+.particle:nth-child(17) { width: 4px; height: 4px; }
+.particle:nth-child(18) { width: 3px; height: 3px; }
+.particle:nth-child(19) { width: 1px; height: 1px; }
+.particle:nth-child(20) { width: 5px; height: 5px; }
+.particle:nth-child(21) { width: 2px; height: 2px; }
+.particle:nth-child(22) { width: 4px; height: 4px; }
+.particle:nth-child(23) { width: 3px; height: 3px; }
+.particle:nth-child(24) { width: 1px; height: 1px; }
+.particle:nth-child(25) { width: 5px; height: 5px; }
+.particle:nth-child(26) { width: 2px; height: 2px; }
+.particle:nth-child(27) { width: 4px; height: 4px; }
+.particle:nth-child(28) { width: 3px; height: 3px; }
+.particle:nth-child(29) { width: 1px; height: 1px; }
+.particle:nth-child(30) { width: 5px; height: 5px; }
+.particle:nth-child(31) { width: 2px; height: 2px; }
+.particle:nth-child(32) { width: 4px; height: 4px; }
+.particle:nth-child(33) { width: 3px; height: 3px; }
+.particle:nth-child(34) { width: 1px; height: 1px; }
+.particle:nth-child(35) { width: 5px; height: 5px; }
+.particle:nth-child(36) { width: 2px; height: 2px; }
+.particle:nth-child(37) { width: 4px; height: 4px; }
+.particle:nth-child(38) { width: 3px; height: 3px; }
+.particle:nth-child(39) { width: 1px; height: 1px; }
+.particle:nth-child(40) { width: 5px; height: 5px; }
+.particle:nth-child(41) { width: 2px; height: 2px; }
+.particle:nth-child(42) { width: 4px; height: 4px; }
+.particle:nth-child(43) { width: 3px; height: 3px; }
+.particle:nth-child(44) { width: 1px; height: 1px; }
+.particle:nth-child(45) { width: 5px; height: 5px; }
+.particle:nth-child(46) { width: 2px; height: 2px; }
+.particle:nth-child(47) { width: 4px; height: 4px; }
+.particle:nth-child(48) { width: 3px; height: 3px; }
+.particle:nth-child(49) { width: 1px; height: 1px; }
+.particle:nth-child(50) { width: 5px; height: 5px; }
+.particle:nth-child(51) { width: 2px; height: 2px; }
+.particle:nth-child(52) { width: 4px; height: 4px; }
+.particle:nth-child(53) { width: 3px; height: 3px; }
+.particle:nth-child(54) { width: 1px; height: 1px; }
+.particle:nth-child(55) { width: 5px; height: 5px; }
+.particle:nth-child(56) { width: 2px; height: 2px; }
+.particle:nth-child(57) { width: 4px; height: 4px; }
+.particle:nth-child(58) { width: 3px; height: 3px; }
+.particle:nth-child(59) { width: 1px; height: 1px; }
+.particle:nth-child(60) { width: 5px; height: 5px; }
+.particle:nth-child(61) { width: 2px; height: 2px; }
+.particle:nth-child(62) { width: 4px; height: 4px; }
+.particle:nth-child(63) { width: 3px; height: 3px; }
+.particle:nth-child(64) { width: 1px; height: 1px; }
+.particle:nth-child(65) { width: 5px; height: 5px; }
+
+
+@keyframes float {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    33% {
+        transform: translateY(-50px) translateX(50px);
+    }
+    66% {
+        transform: translateY(50px) translateX(-50px);
+    }
+    100% {
+        transform: translateY(0) translateX(0);
     }
 } 
+
+/* Если у вас частицы внутри кнопки, такж доавьте: */
+.button:hover .particle {
+    animation-play-state: paused;
+    animation-duration: 3s;
+} 
+
+.container-dark {
+    background-color: #EEEEEE;  /* Чуть темнее серый */
+    border: 1px solid #E0E0E0;
+    box-shadow: 0 0 15px rgba(26, 37, 47, 0.3);
+}
+
+/* Если нужно изменить цвет текста внутри контейнеров */
+.container, .container-dark {
+    color: #212121;  /* Тёмно-серый ткст */
+} 
+
+/* Ссылки и акценты */
+a {
+    color: #0645AD;  /* Классический синий цвет ссылок Wiki */
+}
+
+a:hover {
+    color: #0B0080;  /* Цвет ссылок при наведении */
+} 
+
+.summary-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.summary-content {
+    background: #424242;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    color: #FFFFFF;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.summary-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-end; /* Выравнивание кнопок по правому краю */
+}
+
+.summary-buttons button {
+    padding: 10px 20px;
+    min-width: 120px;
+    background: #616161;  /* Единый цвет для всех кнопок */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+/* Удаляем или комментируем специальный ��тиль для первой кнопки */
+/* .summary-buttons button:first-child {
+    background: var(--primary);
+} */
+
+.summary-buttons button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+} 
+
+/* Изменяем селектор, чтобы стрелки появлялись только у кнопок на главной странице */
+.topics-grid button::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    opacity: 0.3;
+    transition: 0.3s;
+}
+
+.topics-grid button:hover::after {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+/* Убирае стрелки для кнопок в модальном окне */
+.summary-buttons button::after {
+    content: none;
+} 
+
+/* Добавляем стили для состояния фокуса */
+button:focus {
+    background-color: #616161;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    outline: none;
+}
+
+/* Обновляем стили для активного состояния */
+button:active {
+    transform: translateY(0);
+    background-color: #616161;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+} 
+
+.search-container {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 20px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #FFFFFF;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.search-button {
+    padding: 12px 25px;
+    background: #424242;
+    border: none;
+    border-radius: 12px;
+    color: #FFFFFF;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.search-button:hover {
+    background: #616161;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+} 
+
+/* Добавляем специальные стили для кнопки поиска */
+.search-button::after {
+    right: 7px;  /* Уменьшаем отступ справа для кнопки поиска */
+}
+
+.similar-articles {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.similar-articles h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.similar-articles ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.8rem;
+}
+
+.similar-articles li {
+    margin: 0;
+}
+
+.similar-articles a {
+    display: block;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #424242;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+    font-size: 1rem;
+}
+
+.similar-articles a:hover {
+    background: #616161;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.similar-articles a:active {
+    transform: translateY(0);
+}
+
+/* Обновляем стили модального окна для лучшей читаемости */
+.summary-content {
+    background: #212121;
+    padding: 2.5rem;
+    border-radius: 16px;
+    max-width: 700px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+.summary-content h2 {
+    color: #FFFFFF;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.summary-content p {
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+/* Добавляем стили для скроллбара */
+.summary-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.summary-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.summary-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.summary-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
