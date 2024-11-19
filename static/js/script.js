@@ -88,32 +88,18 @@ async function searchWiki() {
 }
 
 function showSummaryModalWithSimilar(title, summary, url, similarTitles) {
-    const modal = document.createElement('div');
-    modal.className = 'summary-modal';
-    modal.innerHTML = `
+    const content = `
         <div class="summary-content">
             <h2>${title}</h2>
-            <p>${summary}</p>
-            ${similarTitles.length > 0 ? `
-                <div class="similar-articles">
-                    <h3>Похожие статьи:</h3>
-                    <ul>
-                        ${similarTitles.map(title => `
-                            <li>
-                                <a href="https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}" 
-                                   target="_blank">${title}</a>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            ` : ''}
+            <p>${summary || 'Краткое содержание недоступно'}</p>
+            ${getSimilarArticlesHTML(similarTitles)}
             <div class="summary-buttons">
                 <button onclick="window.location.href='${url}'">Читать статью</button>
                 <button onclick="this.closest('.summary-modal').remove()">Закрыть</button>
             </div>
         </div>
     `;
-    document.body.appendChild(modal);
+    showModal(content);
 }
 
 function showNotFoundModal() {
@@ -140,3 +126,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Объединить функции показа модальных окон
+function showModal(content) {
+    const modal = document.createElement('div');
+    modal.className = 'summary-modal';
+    modal.innerHTML = content;
+    document.body.appendChild(modal);
+}
+
+function getSimilarArticlesHTML(similarTitles) {
+    if (similarTitles.length > 0) {
+        return `
+            <div class="similar-articles">
+                <h3>Похожие статьи:</h3>
+                <ul>
+                    ${similarTitles.map(title => `
+                        <li>
+                            <a href="https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}" 
+                               target="_blank">${title}</a>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+    } else {
+        return '';
+    }
+}

@@ -13,14 +13,18 @@ import (
 )
 
 type WikiResponse struct {
-	Continue struct {
-		CmContinue string `json:"cmcontinue"`
-	} `json:"continue"`
 	Query struct {
+		Search []struct {
+			Title   string `json:"title"`
+			Snippet string `json:"snippet"`
+		} `json:"search"`
 		CategoryMembers []struct {
 			Title string `json:"title"`
 		} `json:"categorymembers"`
 	} `json:"query"`
+	Continue struct {
+		CmContinue string `json:"cmcontinue"`
+	} `json:"continue"`
 }
 
 type ArticleResponse struct {
@@ -356,4 +360,27 @@ func SearchWikiHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		fmt.Printf("Ошибка при кодировании ответа: %v\n", err)
 	}
+}
+
+// Объединить общую логику поиска
+func searchWikipedia(query string, limit int) (*WikiResponse, error) {
+	apiURL := fmt.Sprintf(
+		"https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s&format=json&srlimit=%d&utf8=1",
+		url.QueryEscape(query),
+		limit,
+	)
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Get(apiURL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var result WikiResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }

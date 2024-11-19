@@ -6,11 +6,11 @@
   --background-dark: #1a1a1a;
   --text-color: #ffffff;
   --card-gradient: linear-gradient(135deg, rgba(0, 255, 135, 0.1) 0%, rgba(96, 239, 255, 0.1) 100%);
-  --primary: #FFFFFF;     /* Белый вместо неонового */
-  --secondary: #FF00FF;   /* Неоновый пурпурный */
-  --accent: rgba(255, 255, 255, 0.8); /* Полупрозрачный белый */
-  --background: #0A0A0A;  /* Тёмный фон */
-  --text: #FFFFFF;        /* Белый текст */
+  --primary: #FFFFFF;
+  --secondary: #FF00FF;
+  --accent: rgba(255, 255, 255, 0.8);
+  --background: #0A0A0A;
+  --text: #FFFFFF;
 }
 
 body {
@@ -64,11 +64,10 @@ body::before {
 
 .particle {
     position: absolute;
-    background-color: #FFFFFF;  /* Чисто белый цвет */
-    opacity: 0.6;              /* Можно настроить прозрачность */
+    background: var(--primary);
     border-radius: 50%;
-    pointer-events: none;
-    animation: float 15s infinite linear;
+    opacity: 0.6;
+    animation: float 15s infinite;
 }
 
 .particle:nth-child(1) { width: 3px; height: 3px; left: 10vw; top: 20vh; animation-delay: 0.5s; opacity: 0.8; }
@@ -122,17 +121,11 @@ body::before {
 }
 
 @keyframes float {
-    0% {
+    0%, 100% {
         transform: translateY(0) translateX(0);
     }
-    33% {
-        transform: translateY(-50px) translateX(50px);
-    }
-    66% {
-        transform: translateY(50px) translateX(-50px);
-    }
-    100% {
-        transform: translateY(0) translateX(0);
+    50% {
+        transform: translateY(-20px) translateX(10px);
     }
 }
 
@@ -418,11 +411,10 @@ h1.text-gradient:hover {
 
 .particle {
     position: absolute;
-    background-color: #FFFFFF;  /* Чисто белый цвет */
-    opacity: 0.6;              /* Можно настроить прозрачность */
+    background: var(--primary);
     border-radius: 50%;
-    pointer-events: none;
-    animation: float 15s infinite linear;
+    opacity: 0.6;
+    animation: float 15s infinite;
 }
 
 /* Создаем 50 частиц разного размера */
@@ -494,17 +486,11 @@ h1.text-gradient:hover {
 
 
 @keyframes float {
-    0% {
+    0%, 100% {
         transform: translateY(0) translateX(0);
     }
-    33% {
-        transform: translateY(-50px) translateX(50px);
-    }
-    66% {
-        transform: translateY(50px) translateX(-50px);
-    }
-    100% {
-        transform: translateY(0) translateX(0);
+    50% {
+        transform: translateY(-20px) translateX(10px);
     }
 } 
 
@@ -548,13 +534,16 @@ a:hover {
 }
 
 .summary-content {
-    background: #424242;
-    padding: 2rem;
-    border-radius: 12px;
-    max-width: 600px;
+    background: #212121;
+    padding: 2.5rem;
+    border-radius: 16px;
+    max-width: 700px;
     width: 90%;
-    color: #FFFFFF;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    max-height: 80vh;
+    overflow-y: auto;
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 .summary-buttons {
@@ -576,7 +565,7 @@ a:hover {
     transition: all 0.3s ease;
 }
 
-/* Удаляем или комментируем специальный ��тиль для первой кнопки */
+/* Удаляем или комментируем специальный тиль для первой кнопки */
 /* .summary-buttons button:first-child {
     background: var(--primary);
 } */
@@ -735,7 +724,7 @@ button:active {
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
-    color: #FFFFFF;
+    color: var(--text);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
