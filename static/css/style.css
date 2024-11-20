@@ -25,7 +25,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 body::before {
@@ -139,6 +140,11 @@ body::before {
 }
 
 .container {
+    max-width: 1200px;
+    padding: 2rem;
+    margin: 2rem auto;
+    text-align: center;
+    width: 90%;
     position: relative;
     z-index: 2;
     background-color: #212121;  /* Светло-серый фон */
@@ -147,7 +153,6 @@ body::before {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid #E0E0E0;
     max-width: 900px;
-    width: 90%;
     color: #212121;  /* Тёмно-серый текст */
 }
 h1, h2, h3, h4, h5, h6 {
@@ -225,24 +230,26 @@ button.error {
 }
 @media (max-width: 768px) {
     .container {
-        padding: 30px;
-        width: 95%;
+        padding: 1rem;
+        margin: 1rem auto;
     }
     
     h1 {
-        font-size: 1.8em;
-        margin-bottom: 30px;
+        font-size: 1.8rem;
+        margin: 1rem 0;
     }
     
     .topics-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 15px;
+        gap: 1rem;
+        padding: 1rem;
     }
     
     button {
-        padding: 18px;
-        font-size: 1.05em;
+        padding: 15px;
+        font-size: 1rem;
+        width: 100%;
+        margin: 0.5rem 0;
     }
 }
 .loading {
@@ -531,6 +538,8 @@ a:hover {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
 }
 
 .summary-content {
@@ -541,6 +550,8 @@ a:hover {
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
+    margin: auto;
+    position: relative;
     color: var(--text);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
@@ -594,7 +605,7 @@ a:hover {
     content: none;
 } 
 
-/* Добавляем стили для состояния фокуса */
+/* Добавляем ��тили для состояния фокуса */
 button:focus {
     background-color: #616161;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -763,4 +774,115 @@ button:active {
 
 .summary-content::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
+}
+
+/* Стили для скроллбара на мобильных */
+@supports (-webkit-touch-callout: none) {
+    .summary-content {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Добавляем стили для модального окна "не найдено" */
+.not-found-content {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.not-found-icon {
+    font-size: 3rem;
+    margin: 1rem 0;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.not-found-content h2 {
+    color: #ff4444;
+    margin: 1rem 0;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+.not-found-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 1.5rem 0;
+}
+
+.retry-button {
+    background: linear-gradient(145deg, #ff4444, #cc0000);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.retry-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+}
+
+.retry-button:active {
+    transform: translateY(0);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-content {
+    background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+    border: 1px solid rgba(255, 68, 68, 0.2);
+    text-align: center;
+}
+
+.error-icon {
+    font-size: 3rem;
+    margin: 1rem 0;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.error-content h2 {
+    color: #ff4444;
+    margin: 1rem 0;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+.error-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 1.5rem 0;
+}
+
+/* Медиа-запрос для мобильных устройств */
+@media (max-width: 768px) {
+    .error-content {
+        padding: 1.5rem;
+    }
+
+    .error-icon {
+        font-size: 2.5rem;
+    }
+
+    .error-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .error-content p {
+        font-size: 1rem;
+    }
 }

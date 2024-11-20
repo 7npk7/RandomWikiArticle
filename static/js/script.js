@@ -64,26 +64,34 @@ async function searchWiki() {
         return;
     }
 
+    const button = document.querySelector('.search-button');
+    button.disabled = true;
+    button.textContent = 'Поиск...';
+
     try {
-        const button = document.querySelector('.search-button');
-        const originalText = button.textContent;
-        button.disabled = true;
-        button.textContent = 'Поиск...';
-        
         const response = await fetch(`/api/search-wiki?query=${encodeURIComponent(query)}`);
+        
+        // Проверяем статус ответа
+        if (!response.ok) {
+            throw new Error('Ошибка сервера');
+        }
+
         const data = await response.json();
         
         if (data.notFound) {
             showNotFoundModal();
         } else if (data.url) {
             showSummaryModalWithSimilar(data.title, data.summary, data.url, data.similar);
+        } else {
+            showErrorModal('Не удалось получить результаты поиска');
         }
         
-        button.disabled = false;
-        button.textContent = originalText;
     } catch (error) {
         console.error('Ошибка:', error);
-        alert('Произошла ошибка при поиске');
+        showErrorModal('Произошла ошибка при поиске. Пожалуйста, попробуйте позже.');
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Найти';
     }
 }
 
@@ -106,11 +114,12 @@ function showNotFoundModal() {
     const modal = document.createElement('div');
     modal.className = 'summary-modal';
     modal.innerHTML = `
-        <div class="summary-content">
+        <div class="summary-content not-found-content">
+            <div class="not-found-icon">❌</div>
             <h2>Статья не найдена</h2>
-            <p>К сожалению, по вашему запросу ничего не найдено.</p>
+            <p>К сожалению, по вашему запросу ничего не найдено. Попробуйте изменить поисковый запрос.</p>
             <div class="summary-buttons">
-                <button onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+                <button class="retry-button" onclick="this.closest('.summary-modal').remove()">Попробовать снова</button>
             </div>
         </div>
     `;
@@ -153,4 +162,21 @@ function getSimilarArticlesHTML(similarTitles) {
     } else {
         return '';
     }
+}
+
+// Добавляем новую функцию для отображения ошибок
+function showErrorModal(message) {
+    const modal = document.createElement('div');
+    modal.className = 'summary-modal';
+    modal.innerHTML = `
+        <div class="summary-content error-content">
+            <div class="error-icon">⚠️</div>
+            <h2>Ошибка</h2>
+            <p>${message}</p>
+            <div class="summary-buttons">
+                <button class="retry-button" onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
 }
