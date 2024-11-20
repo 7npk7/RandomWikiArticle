@@ -649,71 +649,49 @@ button:active {
 } 
 
 .search-container {
-    margin-bottom: 2rem;
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
     width: 100%;
     max-width: 600px;
     margin: 0 auto 2rem;
     padding: 0 1rem;
     box-sizing: border-box;
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .search-input {
     flex: 1;
-    padding: 12px 20px;
-    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    font-size: 16px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    color: #FFFFFF;
+    color: #fff;
     transition: all 0.3s ease;
-    width: calc(100% - 2rem);
-    padding: 0.8rem 1rem;
-    margin-bottom: 1rem;
-    border-radius: 12px;
-    font-size: 16px; /* Оптимальный размер для мобильных */
 }
 
 .search-input:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.4);
     background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-}
-
-.search-input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
 }
 
 .search-button {
-    padding: 12px 25px;
-    background: #424242;
-    border: none;
+    padding: 0.8rem 1.5rem;
     border-radius: 12px;
-    color: #FFFFFF;
-    font-size: 1rem;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
     cursor: pointer;
     transition: all 0.3s ease;
+    white-space: nowrap;
     min-width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .search-button:hover {
-    background: #616161;
+    background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-} 
-
-/* Добавляем специальные стили для кнопки поиска */
-.search-button::after {
-    right: 7px;  /* Уменьшаем отступ справа для кнопки поиска */
 }
 
 .similar-articles {
