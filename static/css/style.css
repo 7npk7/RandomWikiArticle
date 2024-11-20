@@ -11,6 +11,8 @@
   --accent: rgba(255, 255, 255, 0.8);
   --background: #0A0A0A;
   --text: #FFFFFF;
+  --container-padding: 1rem;
+  --button-size: 1rem;
 }
 
 body {
@@ -27,6 +29,7 @@ body {
   align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
+  width: 100%;
 }
 
 body::before {
@@ -154,6 +157,11 @@ body::before {
     border: 1px solid #E0E0E0;
     max-width: 900px;
     color: #212121;  /* Тёмно-серый текст */
+    width: 90%;
+    max-width: 1200px;
+    padding: var(--container-padding);
+    margin: 0 auto;
+    box-sizing: border-box; /* Учитываем padding в общей ширине */
 }
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
@@ -171,12 +179,19 @@ h1 {
     font-weight: 600;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     letter-spacing: 0.5px;
+    font-size: clamp(1.5rem, 5vw, 2.2rem); /* Адаптивный размер шрифта */
+    padding: 0 1rem;
+    text-align: center;
+    margin: 1rem 0 2rem;
+    word-wrap: break-word; /* Перенос длинных слов */
 }
 .topics-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     padding: 2rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 button {
     background-color: #424242;
@@ -193,6 +208,12 @@ button {
     position: relative;
     overflow: hidden;
     outline: none;
+    width: 100%;
+    padding: 15px;
+    font-size: var(--button-size);
+    white-space: normal; /* Разрешаем перенос текста в кнопках */
+    height: auto;
+    min-height: 50px;
 }
 
 button:before {
@@ -540,6 +561,8 @@ a:hover {
     z-index: 1000;
     padding: 20px;
     overflow-y: auto;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 .summary-content {
@@ -555,6 +578,12 @@ a:hover {
     color: var(--text);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+    margin: 1rem auto;
+    box-sizing: border-box;
 }
 
 .summary-buttons {
@@ -605,7 +634,7 @@ a:hover {
     content: none;
 } 
 
-/* Добавляем ��тили для состояния фокуса */
+/* Добавляем тили для состояния фокуса */
 button:focus {
     background-color: #616161;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -627,6 +656,11 @@ button:active {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+    box-sizing: border-box;
 }
 
 .search-input {
@@ -638,6 +672,11 @@ button:active {
     border-radius: 12px;
     color: #FFFFFF;
     transition: all 0.3s ease;
+    width: calc(100% - 2rem);
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    font-size: 16px; /* Оптимальный размер для мобильных */
 }
 
 .search-input:focus {
@@ -884,5 +923,31 @@ button:active {
 
     .error-content p {
         font-size: 1rem;
+    }
+}
+
+/* Стили для очень маленьких экранов */
+@media (max-width: 320px) {
+    :root {
+        --button-size: 0.8rem;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+        margin: 0.8rem 0 1.5rem;
+    }
+
+    .container {
+        width: 100%;
+        padding: 0.3rem;
+    }
+
+    .topics-grid {
+        gap: 0.6rem;
+        padding: 0.3rem;
+    }
+
+    button {
+        padding: 10px;
     }
 }
