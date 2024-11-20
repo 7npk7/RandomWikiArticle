@@ -650,6 +650,9 @@ button:active {
     cursor: pointer;
     transition: all 0.3s ease;
     min-width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .search-button:hover {

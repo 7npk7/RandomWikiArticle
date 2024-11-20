@@ -363,24 +363,3 @@ func SearchWikiHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Объединить общую логику поиска
-func searchWikipedia(query string, limit int) (*WikiResponse, error) {
-	apiURL := fmt.Sprintf(
-		"https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=%s&format=json&srlimit=%d&utf8=1",
-		url.QueryEscape(query),
-		limit,
-	)
-
-	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Get(apiURL)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var result WikiResponse
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, err
-	}
-
-	return &result, nil
-}

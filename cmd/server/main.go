@@ -51,6 +51,10 @@ func main() {
 	http.HandleFunc("/api/random-article", handlers.GetRandomArticleHandler)
 	http.HandleFunc("/api/search-wiki", handlers.SearchWikiHandler)
 
-	fmt.Println("Сервер запущен на порту 8080...")
-	http.ListenAndServe(":8080", nil)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Println("Сервер запущен на порту " + port + "...")
+	http.ListenAndServe(":"+port, nil)
 }
