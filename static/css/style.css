@@ -948,3 +948,37 @@ button:active {
 .container .search-container .search-button::after {
     content: none;
 }
+
+/* Запрещаем горизонтальный скролл на всех уровнях */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.container {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Убедимся, что сетка не выходит за пределы контейнера */
+.topics-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+/* Для мобильных устройств */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        width: 100%;
+        margin: 0;
+    }
+
+    .topics-grid {
+        padding: 0.5rem;
+    }
+}
