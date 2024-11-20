@@ -648,7 +648,7 @@ button:active {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 } 
 
-.search-container {
+.container .search-container {
     width: 100%;
     max-width: 600px;
     margin: 0 auto 2rem;
@@ -659,9 +659,10 @@ button:active {
     align-items: center;
 }
 
-.search-input {
-    flex: 1;
-    padding: 0.8rem 1rem;
+.container .search-input {
+    width: 100%;
+    flex: 1 1 auto;
+    padding: 12px 20px;
     border-radius: 12px;
     font-size: 16px;
     background: rgba(255, 255, 255, 0.1);
@@ -670,28 +671,36 @@ button:active {
     transition: all 0.3s ease;
 }
 
-.search-input:focus {
-    outline: none;
-    border-color: rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.search-button {
-    padding: 0.8rem 1.5rem;
+.container .search-button {
+    width: auto !important; /* Принудительно отменяем width: 100% */
+    flex: 0 0 auto;
+    padding: 12px 20px;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 14px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
-    min-width: 100px;
+    min-width: 80px;
 }
 
-.search-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+/* Медиа-запросы с повышенной специфичностью */
+@media (max-width: 768px) {
+    .container .search-container {
+        padding: 0 0.5rem;
+    }
+
+    .container .search-input {
+        font-size: 14px;
+    }
+
+    .container .search-button {
+        font-size: 14px;
+        padding: 12px 15px;
+        width: auto !important;
+    }
 }
 
 .similar-articles {
@@ -746,7 +755,7 @@ button:active {
     transform: translateY(0);
 }
 
-/* Обновляем стили модального окна для лучшей читаемости */
+/* Обновляем стили модального окна дл лучшей читаемости */
 .summary-content {
     background: #212121;
     padding: 2.5rem;
@@ -928,4 +937,14 @@ button:active {
     button {
         padding: 10px;
     }
+}
+
+/* Убираем стрелку из кнопки поиска */
+.search-button::after {
+    content: none !important;
+}
+
+/* Или можно сделать более специфично */
+.container .search-container .search-button::after {
+    content: none;
 }
