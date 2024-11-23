@@ -13,7 +13,7 @@ func StaticHandler(w http.ResponseWriter, r *http.Request) {
 
 func getParticlesHTML() string {
 	particles := ""
-	for i := 0; i < 200; i++ {
+	for i := 0; i < 2000; i++ {
 		particles += `<div class="particle"></div>`
 	}
 	return particles

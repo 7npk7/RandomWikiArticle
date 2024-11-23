@@ -194,58 +194,43 @@ h1 {
     box-sizing: border-box;
 }
 button {
-    background-color: #424242;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #424242 !important;
     color: #FFFFFF;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
     padding: 20px;
-    border: none;
     border-radius: 12px;
     cursor: pointer;
     font-size: 1.1em;
     font-weight: 500;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
     outline: none;
-    width: 100%;
-    padding: 15px;
-    font-size: var(--button-size);
-    white-space: normal; /* Разрешаем перенос текста в кнопках */
-    height: auto;
-    min-height: 50px;
 }
 
-button:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.1),
-        transparent
-    );
-    transition: 0.5s;
-}
 button:hover {
-    background-color: #616161;
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-    animation-play-state: paused;
-    animation-duration: 3s;
+    background-color: #616161 !important;
+    transform: translateY(-2px);
 }
-button:hover:before {
-    left: 100%;
+
+button:focus {
+    background-color: #424242 !important;
+    outline: none !important;
+    border-color: rgba(255, 255, 255, 0.3);
 }
+
 button:active {
-    transform: translateY(0);
-    background: linear-gradient(145deg, #1f2235, #2a2d3e);
+    background-color: #424242 !important;
+    transform: translateY(1px);
 }
+
+button::-moz-focus-inner {
+    border: 0;
+}
+
 button.error {
     background: linear-gradient(145deg, #ff4444, #cc0000);
 }
@@ -312,7 +297,7 @@ button:hover::after {
     transform: translateX(5px);
 } 
 
-/* Плавные переходы для интерактивных элементов */
+/* Плавные переходы дл интерактивных элементов */
 a, button {
   transition: all 0.2s ease-in-out;
 }
@@ -615,7 +600,7 @@ a:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 } 
 
-/* Изменяем селектор, чтобы стрелки появлялись только у кнопок на главной странице */
+/* Изменяем селектор, чтобы стрелки появлялись олько у кнопок на главной странице */
 .topics-grid button::after {
     content: '→';
     position: absolute;
@@ -636,16 +621,15 @@ a:hover {
 
 /* Добавляем тили для состояния фокуса */
 button:focus {
-    background-color: #616161;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    background-color: #424242 !important; /* Принудительно переопределяем цвет */
     outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
 /* Обновляем стили для активного состояния */
 button:active {
-    transform: translateY(0);
-    background-color: #616161;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background-color: #424242 !important;
+    transform: translateY(1px);
 } 
 
 .container .search-container {

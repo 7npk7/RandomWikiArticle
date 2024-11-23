@@ -95,19 +95,41 @@ async function searchWiki() {
     }
 }
 
-function showSummaryModalWithSimilar(title, summary, url, similarTitles) {
-    const content = `
+function showSummaryModalWithSimilar(title, summary, url, similar, isFromTopic = false) {
+    console.log('Показываем модальное окно:', { title, summary, url, similar, isFromTopic });
+    const modal = document.createElement('div');
+    modal.className = 'summary-modal';
+    
+    // Формируем HTML для похожих статей
+    const similarArticlesHTML = similar && Array.isArray(similar) && similar.length > 0 
+        ? `
+            <div class="similar-articles">
+                <h3>Похожие статьи:</h3>
+                <ul>
+                    ${similar.map(article => {
+                        const articleTitle = typeof article === 'string' ? article : article.title;
+                        const articleUrl = typeof article === 'string' 
+                            ? `https://ru.wikipedia.org/wiki/${encodeURIComponent(articleTitle)}`
+                            : article.url;
+                        return `<li><a href="${articleUrl}" target="_blank">${articleTitle}</a></li>`;
+                    }).join('')}
+                </ul>
+            </div>`
+        : '';
+
+    modal.innerHTML = `
         <div class="summary-content">
             <h2>${title}</h2>
-            <p>${summary || 'Краткое содержание недоступно'}</p>
-            ${getSimilarArticlesHTML(similarTitles)}
+            <p>${summary}</p>
+            ${similarArticlesHTML}
             <div class="summary-buttons">
-                <button onclick="window.location.href='${url}'">Читать статью</button>
+                <button onclick="window.open('${url}', '_blank')">Читать полностью</button>
                 <button onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+                ${isFromTopic ? `<button onclick="getNewArticleForTopic('${currentTopic}')">Новая статья на эту тему</button>` : ''}
             </div>
         </div>
     `;
-    showModal(content);
+    document.body.appendChild(modal);
 }
 
 function showNotFoundModal() {
@@ -164,7 +186,7 @@ function getSimilarArticlesHTML(similarTitles) {
     }
 }
 
-// Добавляем новую функцию для отображения ошибок
+// Добавляем ноую функцию для отображения ошибок
 function showErrorModal(message) {
     const modal = document.createElement('div');
     modal.className = 'summary-modal';
@@ -174,9 +196,55 @@ function showErrorModal(message) {
             <h2>Ошибка</h2>
             <p>${message}</p>
             <div class="summary-buttons">
-                <button class="retry-button" onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+                <button onclick="this.closest('.summary-modal').remove()">Закрыть</button>
+                <button onclick="this.closest('.summary-modal').remove(); redirectToTopicWiki('${currentTopic}')">Попробовать снова</button>
             </div>
         </div>
     `;
     document.body.appendChild(modal);
+}
+
+// Добавим глобальную переменную для хранения текущего топика
+let currentTopic = '';
+
+// Обновим функцию redirectToTopicWiki
+function redirectToTopicWiki(topic) {
+    console.log('Выбран топик:', topic);
+    currentTopic = topic;
+    
+    fetch(`/api/random-article?category=${encodeURIComponent(topic)}`)
+        .then(response => {
+            console.log('Получен ответ:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Получены данные:', data);
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            if (!data.url || !data.title) {
+                throw new Error('Неполные данные от сервера');
+            }
+            showSummaryModalWithSimilar(
+                data.title,
+                data.summary || 'Краткое содержание недоступно',
+                data.url,
+                data.similar || [],
+                true // Указываем, что это вызов из топика
+            );
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            showErrorModal(`Не удалось получить статью: ${error.message}`);
+        });
+}
+
+// Функция для получения новой статьи по текущей теме
+function getNewArticleForTopic(topic) {
+    console.log('Запрос новой статьи для топика:', topic);
+    const currentModal = document.querySelector('.summary-modal');
+    if (currentModal) {
+        currentModal.remove();
+    }
+    redirectToTopicWiki(topic);
 }

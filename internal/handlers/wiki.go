@@ -33,10 +33,10 @@ type ArticleResponse struct {
 	Summary string `json:"summary,omitempty"`
 }
 
-// Добавляем карту соответствий в начало файла после объявления структур
+// Обновляем карту соответствий категорий
 var categoryMap = map[string]string{
 	"science": "Наука",
-	"it":      "Информатика",
+	"it":      "Информационные_технологии",
 	"sport":   "Спорт",
 	"books":   "Литература",
 	"games":   "Компьютерные_игры",
@@ -48,130 +48,119 @@ func init() {
 }
 
 func GetRandomArticleHandler(w http.ResponseWriter, r *http.Request) {
+	// Включаем CORS и устанавливаем заголовки
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+
+	// Получаем категорию из параметров запроса
 	category := r.URL.Query().Get("category")
-	fmt.Printf("🔍 Запрос статьи из категории: %s\n", category)
+	fmt.Printf("🔍 Получен запрос для категории: %s\n", category)
 
 	if category == "" {
-		sendError(w, "Category is required", http.StatusBadRequest)
+		http.Error(w, `{"error": "Category is required"}`, http.StatusBadRequest)
 		return
 	}
 
 	// Получаем русское название категории
-	wikiCategory, exists := categoryMap[category]
-	if !exists {
-		sendError(w, "Invalid category", http.StatusBadRequest)
+	ruCategory, ok := categoryMap[category]
+	if !ok {
+		fmt.Printf("❌ Неизвестная категория: %s\n", category)
+		http.Error(w, `{"error": "Invalid category"}`, http.StatusBadRequest)
 		return
 	}
 
-	// Формируем URL для API запроса с добавлением случайного параметра
-	categoryPath := "Категория:" + wikiCategory
+	// Формируем корректный URL для API запроса
 	apiURL := fmt.Sprintf(
-		"https://ru.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=%s&format=json&cmlimit=500&cmnamespace=0&cmtype=page",
-		url.QueryEscape(categoryPath),
+		"https://ru.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=%s&format=json&cmlimit=500&cmnamespace=0&origin=*",
+		url.QueryEscape("Категория:"+ruCategory),
 	)
+	fmt.Printf("📌 URL запроса: %s\n", apiURL)
 
-	fmt.Printf("Запрашиваемый URL: %s\n", apiURL)
+	// Создаем HTTP клиент с таймаутом
+	client := &http.Client{Timeout: 10 * time.Second}
 
-	// Добавляем заголовки для предотвращения кэширования
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	w.Header().Set("Pragma", "no-cache")
-	w.Header().Set("Expires", "0")
-
-	client := &http.Client{Timeout: 15 * time.Second}
+	// Выполняем запрос к API Wikipedia
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
-		sendError(w, fmt.Sprintf("Failed to create request: %v", err), http.StatusInternalServerError)
+		fmt.Printf("❌ Ошибка создания запроса: %v\n", err)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to create request"})
 		return
 	}
 
-	req.Header.Set("User-Agent", "RandomWikiArticle/1.0 (educational project)")
+	// Устанавливаем правильные заголовки
+	req.Header.Set("User-Agent", "WikiRandomArticle/1.0 (https://your-domain.com; your@email.com)")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept-Language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7")
 
-	var allArticles []struct {
-		Title string `json:"title"`
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("❌ Ошибка выполнения запроса: %v\n", err)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to fetch articles"})
+		return
 	}
-	cmcontinue := ""
+	defer resp.Body.Close()
 
-	// Получаем до 2000 статей (4 запроса по 500)
-	for i := 0; i < 4; i++ {
-		apiURL := fmt.Sprintf(
-			"https://ru.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=%s&format=json&cmlimit=500&cmnamespace=0",
-			url.QueryEscape(categoryPath),
-		)
-
-		if cmcontinue != "" {
-			apiURL += "&cmcontinue=" + url.QueryEscape(cmcontinue)
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			fmt.Printf("❌ Ошибка API запроса: %v\n", err)
-			continue
-		}
-		defer resp.Body.Close()
-
-		var wikiResp WikiResponse
-		if err := json.NewDecoder(resp.Body).Decode(&wikiResp); err != nil {
-			fmt.Printf("Ошибка декодирования ответа: %v\n", err)
-			continue
-		}
-
-		allArticles = append(allArticles, wikiResp.Query.CategoryMembers...)
-
-		if wikiResp.Continue.CmContinue == "" {
-			break
-		}
-		cmcontinue = wikiResp.Continue.CmContinue
-	}
-
-	fmt.Printf("✅ Найдено статей: %d\n", len(allArticles))
-
-	if len(allArticles) == 0 {
-		sendError(w, fmt.Sprintf("No articles found in category: %s", category), http.StatusNotFound)
+	// Читаем тело ответа для отладки
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Printf("❌ Ошибка чтения ответа: %v\n", err)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to read response"})
 		return
 	}
 
-	// Выбираем случайную статью из всего списка
-	source := rand.NewSource(time.Now().UnixNano())
-	rnd := rand.New(source)
-	randomArticle := allArticles[rnd.Intn(len(allArticles))]
+	// Выводим первые 200 символов ответа для отладки
+	fmt.Printf("📝 Начало ответа: %s\n", string(body[:min(len(body), 200)]))
 
-	if randomArticle.Title == "" {
-		sendError(w, "Failed to get valid random article", http.StatusInternalServerError)
+	var result struct {
+		Query struct {
+			CategoryMembers []struct {
+				Title string `json:"title"`
+			} `json:"categorymembers"`
+		} `json:"query"`
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		fmt.Printf("❌ Ошибка декодирования JSON: %v\n", err)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to decode Wikipedia response"})
 		return
 	}
 
-	fmt.Printf("📎 Выбрана статья: %s\n", randomArticle.Title)
+	if len(result.Query.CategoryMembers) == 0 {
+		fmt.Printf("❌ Статьи не найдены для категории: %s\n", ruCategory)
+		json.NewEncoder(w).Encode(map[string]string{"error": "No articles found"})
+		return
+	}
 
+	// Выбираем случайную статью
+	randomArticle := result.Query.CategoryMembers[rand.Intn(len(result.Query.CategoryMembers))]
+
+	// Формируем URL статьи
 	articleURL := fmt.Sprintf("https://ru.wikipedia.org/wiki/%s",
 		url.PathEscape(randomArticle.Title))
 
-	// Получаем содержание статьи
-	articleContent, err := getArticleContent(randomArticle.Title)
-	if err != nil {
-		fmt.Printf("Ошибка получения содержания статьи: %v\n", err)
+	// Формируем ответ
+	response := ArticleResponse{
+		URL:   articleURL,
+		Title: randomArticle.Title,
 	}
 
-	fmt.Printf("📄 Получено содержание статьи длиной: %d символов\n", len(articleContent))
-
-	// Генерируем краткое содержание через GigaChat
-	var summary string
-	gigaChatService := services.NewGigaChatService(os.Getenv("GIGACHAT_TOKEN"))
-	if gigaChatService == nil {
-		fmt.Printf("❌ Не удалось инициализировать GigaChat сервис\n")
-	} else {
-		summary, err = gigaChatService.GenerateSummary(r.Context(), articleContent)
-		if err != nil {
-			fmt.Printf("❌ Ошибка генерации краткого содержания: %v\n", err)
+	// Пытаемся получить содержание статьи
+	if content, err := getArticleContent(randomArticle.Title); err == nil && content != "" {
+		if gigaChatService := services.NewGigaChatService(os.Getenv("GIGACHAT_TOKEN")); gigaChatService != nil {
+			if summary, err := gigaChatService.GenerateSummary(r.Context(), content); err == nil {
+				response.Summary = summary
+			}
 		}
 	}
 
-	// Возвращаем результат
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ArticleResponse{
-		URL:     articleURL,
-		Title:   randomArticle.Title,
-		Summary: summary,
-	})
+	// Отправляем ответ
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		fmt.Printf("❌ Ошибка отправки ответа: %v\n", err)
+		http.Error(w, `{"error": "Failed to send response"}`, http.StatusInternalServerError)
+		return
+	}
 }
 
 func getArticleContent(title string) (string, error) {
