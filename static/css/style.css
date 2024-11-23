@@ -22,13 +22,11 @@ body {
   text-rendering: optimizeLegibility;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
   background-color: var(--background-dark);
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-y: auto;
-  overflow-x: hidden;
+  min-height: 100vh;
   width: 100%;
 }
 
@@ -143,25 +141,12 @@ body::before {
 }
 
 .container {
-    max-width: 1200px;
-    padding: 2rem;
-    margin: 2rem auto;
-    text-align: center;
     width: 90%;
+    max-width: 800px;
+    padding: 2rem;
     position: relative;
     z-index: 2;
-    background-color: #212121;  /* Светло-серый фон */
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border: 1px solid #E0E0E0;
-    max-width: 900px;
-    color: #212121;  /* Тёмно-серый текст */
-    width: 90%;
-    max-width: 1200px;
-    padding: var(--container-padding);
-    margin: 0 auto;
-    box-sizing: border-box; /* Учитываем padding в общей ширине */
+    text-align: center;
 }
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
@@ -976,9 +961,15 @@ html, body {
         padding: 0;
     }
 
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .container {
-        height: 100vh;
-        overflow: hidden;
+        margin: auto;
+        transform: translateY(-2%); /* Небольшой сдвиг вверх для визуального баланса */
     }
 
     .summary-modal {
@@ -992,7 +983,6 @@ html, body {
         justify-content: center;
         align-items: center;
         z-index: 1000;
-        overflow: hidden;
     }
 
     .summary-content {
@@ -1014,7 +1004,15 @@ html, body {
     }
 
     .container {
-        min-height: 100vh;
-        overflow-y: auto;
+        padding: 1rem;
+        margin: 2rem auto;
+    }
+}
+
+/* Медиа-запрос для очень маленьких экранов */
+@media (max-width: 320px) {
+    .container {
+        width: 95%;
+        padding: 0.5rem;
     }
 }
