@@ -966,3 +966,55 @@ html, body {
         padding: 0.5rem;
     }
 }
+
+/* Отключаем скролл на десктопе */
+@media (min-width: 768px) {
+    html, body {
+        overflow: hidden;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .summary-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        overflow: hidden;
+    }
+
+    .summary-content {
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 2rem;
+        background: var(--background-dark);
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        width: 80%;
+        max-width: 800px;
+    }
+}
+
+/* Сохраняем скролл для мобильных устройств */
+@media (max-width: 767px) {
+    html, body {
+        overflow-y: auto;
+    }
+
+    .container {
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+}
